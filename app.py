@@ -10,6 +10,7 @@ import pandas as pd
 import pickle
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 
 # -------------------------------
 # Step 2: Build Input Form
@@ -73,7 +74,7 @@ if submit_button and feedback.strip() != "":
 
     if os.path.exists(report_file):
         df_existing = pd.read_csv(report_file)
-        df_existing = df_existing.append(record, ignore_index=True)
+        df_existing = pd.concat([df_existing, pd.DataFrame([record])], ignore_index=True)
         df_existing.to_csv(report_file, index=False)
     else:
         df_new = pd.DataFrame([record])
@@ -90,6 +91,7 @@ if st.checkbox("Show Feedback Report"):
         st.dataframe(df_report)
     else:
         st.warning("No feedback data available yet.")
+
 # -------------------------------
 # Step 7: Visualize Sentiment Distribution
 # -------------------------------
@@ -102,10 +104,10 @@ if st.checkbox("Show Sentiment Charts"):
         st.bar_chart(sentiment_counts)
 
         st.subheader("Sentiment Distribution - Pie Chart")
-        st.write(
-            df_report['Sentiment'].value_counts().plot.pie(
-                autopct='%1.1f%%', startangle=90, figsize=(5,5)
-            )
+        fig, ax = plt.subplots()
+        sentiment_counts.plot.pie(
+            autopct='%1.1f%%', startangle=90, ax=ax
         )
+        st.pyplot(fig)
     else:
         st.warning("No feedback data available to show charts.")
