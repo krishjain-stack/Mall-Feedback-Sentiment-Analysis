@@ -10,6 +10,7 @@ import pandas as pd             # For handling CSV files and dataframes
 import os                       # For checking if file exists
 from textblob import TextBlob   # For sentiment analysis
 import matplotlib.pyplot as plt  # For plotting charts
+import base64                   # For encoding background image
 
 # -------------------------------
 # Background Image CSS
@@ -30,8 +31,7 @@ def set_background(image_file):
     )
 
 # Convert local image to base64 so Streamlit can display it
-import base64
-with open("back.png", "rb") as f:
+with open("back2.png", "rb") as f:   # <-- using back2.png
     encoded_image = base64.b64encode(f.read()).decode()
 
 set_background(encoded_image)
