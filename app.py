@@ -1,8 +1,7 @@
 # app.py
 # -------------------------------
 # EB Mall Feedback Sentiment Analysis
-# Frontend + Backend Integration
-# Using TextBlob for better sentiment recognition
+# With Background + Side by Side Charts
 # -------------------------------
 
 # Step 1: Import Libraries
@@ -11,6 +10,31 @@ import pandas as pd             # For handling CSV files and dataframes
 import os                       # For checking if file exists
 from textblob import TextBlob   # For sentiment analysis
 import matplotlib.pyplot as plt  # For plotting charts
+
+# -------------------------------
+# Background Image CSS
+# -------------------------------
+def set_background(image_file):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: url("data:image/png;base64,{image_file}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Convert local image to base64 so Streamlit can display it
+import base64
+with open("back.png", "rb") as f:
+    encoded_image = base64.b64encode(f.read()).decode()
+
+set_background(encoded_image)
 
 # -------------------------------
 # Step 2: Build Input Form
@@ -90,16 +114,19 @@ if st.checkbox("Show Sentiment Charts"):
         df_report = pd.read_csv(report_file)
         sentiment_counts = df_report['Sentiment'].value_counts()  # Count Positive, Negative, Neutral
 
-        # Bar chart
-        st.subheader("Sentiment Distribution - Bar Chart")
-        st.bar_chart(sentiment_counts)
+        # Create two columns for charts side by side
+        col1, col2 = st.columns(2)
 
-        # Pie chart
-        st.subheader("Sentiment Distribution - Pie Chart")
-        fig, ax = plt.subplots()
-        sentiment_counts.plot.pie(
-            autopct='%1.1f%%', startangle=90, ax=ax
-        )
-        st.pyplot(fig)
+        with col1:
+            st.subheader("Sentiment Distribution - Bar Chart")
+            st.bar_chart(sentiment_counts)
+
+        with col2:
+            st.subheader("Sentiment Distribution - Pie Chart")
+            fig, ax = plt.subplots()
+            sentiment_counts.plot.pie(
+                autopct='%1.1f%%', startangle=90, ax=ax
+            )
+            st.pyplot(fig)
     else:
         st.warning("No feedback data available to show charts.")
